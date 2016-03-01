@@ -24,6 +24,7 @@
                         <th width="100px">Date</th>
                         <th>Type</th>
                         <th>Id</th>
+                        <th>Timestamp</th>
                     </tr>
                 </thead>
 
@@ -49,6 +50,7 @@
                             
                             <td>${(work.identifierType?html)!}</td>
                             <td>${(work.identifier?html)!}</td>
+                            <td>${(work.created?datetime)!}</td>
                         </tr>
                     </#list>
                 </tbody>

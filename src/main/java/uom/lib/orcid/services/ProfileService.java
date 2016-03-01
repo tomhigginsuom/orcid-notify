@@ -8,14 +8,16 @@ import uom.lib.orcid.model.Work;
 import uom.lib.orcid.model.OrcidResponse;
 import uom.lib.orcid.model.Profile;
 
-public class WorksService {
+public class ProfileService {
     
     private String endpoint;
     public void setEndpoint(String endpoint) {this.endpoint = endpoint;};
     
-    public ArrayList<Work> getWorks(Profile profile) {
+    public Profile getProfile(String orcidId) {
         
-        ArrayList<Work> works = new ArrayList<Work>();
+        Profile profile = new Profile(orcidId);
+        ArrayList<Work> works = new ArrayList<>();
+        
         String url = endpoint + profile.identifier + "/orcid-profile";
         System.out.println("query: " + url);
         try {
@@ -100,12 +102,12 @@ public class WorksService {
             e.printStackTrace();
         }
         
-        return works;
+        profile.works = works;
+        return profile;
     }
     
     private String query(String url) throws Exception {
-        
-        // TODO: set header to request JSON
+
         URL queryURL = new URL(url);
         HttpURLConnection hc = (HttpURLConnection)queryURL.openConnection();
         hc.setRequestMethod("GET");

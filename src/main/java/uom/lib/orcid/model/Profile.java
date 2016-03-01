@@ -1,5 +1,6 @@
 package uom.lib.orcid.model;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 // An ORCID profile
@@ -14,7 +15,10 @@ public class Profile {
     // Names
     public String givenNames;
     public String familyName;
-
+    
+    // Works
+    public ArrayList<Work> works;
+    
     public Profile(String identifier) {
         this.identifier = identifier;
     }
@@ -49,5 +53,13 @@ public class Profile {
 
     public void setFamilyName(String familyName) {
         this.familyName = familyName;
+    }
+
+    public ArrayList<Work> getWorks() {
+        return works;
+    }
+    
+    public void setWorks(ArrayList<Work> works) {
+        this.works = works;
     }
 }

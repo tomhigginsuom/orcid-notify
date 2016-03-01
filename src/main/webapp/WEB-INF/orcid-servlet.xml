@@ -3,12 +3,15 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:task="http://www.springframework.org/schema/task"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans.xsd
         http://www.springframework.org/schema/context
         http://www.springframework.org/schema/context/spring-context.xsd
         http://www.springframework.org/schema/mvc
         http://www.springframework.org/schema/mvc/spring-mvc.xsd
+        http://www.springframework.org/schema/task
+        http://www.springframework.org/schema/task/spring-task.xsd
        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.1.xsd" xmlns:aop="http://www.springframework.org/schema/aop">
 
 
@@ -16,6 +19,9 @@
     
     <mvc:annotation-driven />
 
+    <task:annotation-driven scheduler="orcidScheduler"/>
+    <task:scheduler id="orcidScheduler" pool-size="1"/>
+    
     <!-- freemarker config -->
 
     <bean id="freemarkerConfig" class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer">
@@ -49,14 +55,18 @@
     <mvc:resources mapping="/resources/**" location="/resources/" />
 
     <bean id="orcidController" class="uom.lib.orcid.controllers.OrcidController">
-        <property name="worksService" ref="worksService" />
         <property name="orcidService" ref="orcidsService" />
     </bean>
     
-    <bean id="worksService" class="uom.lib.orcid.services.WorksService">
-        <property name="endpoint" value="http://pub.orcid.org/" />
+    <bean id="orcidTask" class="uom.lib.orcid.controllers.OrcidTask">
+        <property name="orcidService" ref="orcidsService" />
+        <property name="profileService" ref="profileService" />
     </bean>
     
+    <bean id="profileService" class="uom.lib.orcid.services.ProfileService">
+        <property name="endpoint" value="http://pub.orcid.org/" />
+    </bean>
+        
     <bean id="orcidsService" class="uom.lib.orcid.services.OrcidService">
         <property name="orcidDAO" ref="orcidDAO" />
     </bean>

@@ -11,9 +11,6 @@ import uom.lib.orcid.model.*;
 @Controller
 public class OrcidController {
     
-    private WorksService worksService;
-    public void setWorksService(WorksService worksService) {this.worksService = worksService;}
-    
     private OrcidService orcidService;
     public void setOrcidService(OrcidService orcidService) {this.orcidService = orcidService;}
     
@@ -31,14 +28,12 @@ public class OrcidController {
     }
     
     @RequestMapping(value = "/{orcidid}", method = RequestMethod.GET)
-    public String getOrcid(ModelMap model, @PathVariable("orcidid") String orcidId) {
+    public String getOrcid(ModelMap model, @PathVariable("orcidid") String orcidId) throws Exception {
         
         // Validate the ORCID format?
         
-        Profile profile = new Profile(orcidId);
-        
-        ArrayList<Work> works = worksService.getWorks(profile);
-        System.out.println("Got " + works.size() + " works");
+        Profile profile = orcidService.getOrcidProfile(orcidId);
+        ArrayList<Work> works = orcidService.getOrcidWorks(orcidId);
         
         Collections.sort(works, Collections.reverseOrder());
         

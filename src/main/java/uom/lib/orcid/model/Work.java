@@ -1,6 +1,9 @@
 package uom.lib.orcid.model;
 
 // A Work which is related to an Orcid
+
+import java.util.Date;
+
 public class Work implements Comparable {
     
     // ID
@@ -13,6 +16,9 @@ public class Work implements Comparable {
     public Integer year;
     public Integer month;
     public Integer day;
+    
+    // Database record created
+    public Date created;
     
     // Source
     public String identifierType;
@@ -131,5 +137,13 @@ public class Work implements Comparable {
 
     public void setIdentifier(String identifier) {
         this.identifier = identifier;
+    }
+
+    public Date getCreated() {
+        return created;
+    }
+
+    public void setCreated(Date created) {
+        this.created = created;
     }
 }
