@@ -8,6 +8,8 @@ import uom.lib.orcid.model.Work;
 import uom.lib.orcid.model.OrcidResponse;
 import uom.lib.orcid.model.Profile;
 
+// A service to retrieve ORCID profile and works data from the public ORCID API
+
 public class ProfileService {
     
     private String endpoint;
@@ -23,7 +25,9 @@ public class ProfileService {
         try {
             String responseText = query(url);
             System.out.println("response: " + responseText.length() + " bytes");
-            System.out.println(responseText);
+            profile.size = responseText.length();
+            
+            // System.out.println(responseText);
             
             OrcidResponse response = new Gson().fromJson(responseText, OrcidResponse.class);
             

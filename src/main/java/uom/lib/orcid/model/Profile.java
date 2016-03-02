@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 // An ORCID profile
-public class Profile {
+public class Profile implements Comparable {
     
     // ORCID
     public String identifier;
@@ -18,6 +18,9 @@ public class Profile {
     
     // Works
     public ArrayList<Work> works;
+    
+    // API statistics
+    public Integer size;
     
     public Profile(String identifier) {
         this.identifier = identifier;
@@ -61,5 +64,18 @@ public class Profile {
     
     public void setWorks(ArrayList<Work> works) {
         this.works = works;
+    }
+
+    public Integer getSize() {
+        return size;
+    }
+
+    public void setSize(Integer size) {
+        this.size = size;
+    }
+    
+    public int compareTo(Object other) {
+        Profile otherProfile = (Profile)other;
+        return this.lastModified.compareTo(otherProfile.getLastModified());
     }
 }

@@ -12,15 +12,22 @@ public class OrcidService {
         this.orcidDAO = orcidDAO;
     }
     
-    public ArrayList<String> getOrcids() throws Exception {
+    public ArrayList<Profile> getOrcids() throws Exception {
         
-        ArrayList<String> orcids = new ArrayList<>();
+        ArrayList<Profile> orcids = new ArrayList<>();
         
         List<Map<String, Object>> results = orcidDAO.getOrcids();
         
         for (Map<String, Object> result : results) {
-            Object value = result.get("orcid_id");
-            orcids.add((String)value);
+            
+            String orcidId = (String)result.get("orcid_id");
+            Profile profile = new Profile(orcidId);
+            
+            profile.setFamilyName((String)result.get("family_name"));
+            profile.setGivenNames((String)result.get("given_names"));
+            profile.setLastModified((Date)result.get("last_modified"));
+            
+            orcids.add(profile);
         }
         
         return orcids;
@@ -40,8 +47,12 @@ public class OrcidService {
         return orcids;
     }
     
-    public void updateOrcid(String orcidId, Date timestamp, String givenNames, String familyName) {
-        orcidDAO.updateOrcid(orcidId, timestamp, givenNames, familyName);
+    public void markOrcidStale(String orcidId) {
+        orcidDAO.markOrcidStale(orcidId);
+    }
+    
+    public void updateOrcid(String orcidId, Date timestamp, Date initialLoad, String givenNames, String familyName) {
+        orcidDAO.updateOrcid(orcidId, timestamp, initialLoad, givenNames, familyName);
     }
     
     public Profile getOrcidProfile(String orcidId) throws Exception {
@@ -50,12 +61,12 @@ public class OrcidService {
         Profile profile = new Profile(orcidId);
         profile.setFamilyName((String)result.get("family_name"));
         profile.setGivenNames((String)result.get("given_names"));
-        profile.setLastModified((Date)result.get("updated"));
+        profile.setLastModified((Date)result.get("last_modified"));
         
         return profile;
     }
     
-    public void updateWorks(String orcidId, Work work) {
+    public void updateWorks(String orcidId, Work work, Date timestamp) {
         
         // Check if exists in DB ...
         boolean exists = orcidDAO.checkOrcidWorkExists(orcidId, work.getPutCode(), work.getIdentifierType(), work.getIdentifier());
@@ -63,6 +74,7 @@ public class OrcidService {
         if (!exists) {
             // Add new work informtion with current timestamp
             orcidDAO.addOrcidWork(orcidId,
+                    timestamp,
                     work.getPutCode(),
                     work.getIdentifierType(),
                     work.getIdentifier(),
@@ -96,5 +108,9 @@ public class OrcidService {
         }
         
         return works;
+    }
+    
+    public void updateStatistics(int requests, long bytes) {
+        orcidDAO.updateStatistics(requests, bytes);
     }
 }

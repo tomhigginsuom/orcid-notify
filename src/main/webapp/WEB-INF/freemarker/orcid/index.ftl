@@ -10,15 +10,19 @@
             <thead>
                 <tr class="tr">
                     <th>ORCID ID</th>
+                    <th>Name</th>
+                    <th>Last modified</th>
                 </tr>
             </thead>
 
             <tbody>
-                <#list orcids as orcid>
+                <#list profiles as profile>
                     <tr class="tr">
                         <td>
-                            <a href="${springMacroRequestContext.getContextPath()}/${orcid}">${orcid}</a>
+                            <a href="${springMacroRequestContext.getContextPath()}/${profile.identifier}">${profile.identifier}</a>
                         </td>
+                        <td>${(profile.givenNames?html)!} ${(profile.familyName?html)!}</td>
+                        <td>${(profile.lastModified?datetime)!}</td>
                     </tr>
                 </#list>
             </tbody>

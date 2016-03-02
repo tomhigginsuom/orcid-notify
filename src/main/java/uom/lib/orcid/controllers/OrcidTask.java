@@ -39,14 +39,25 @@ public class OrcidTask {
                     // Query the API endpoint for profile information
                     Profile profile = profileService.getProfile(orcidId);
                     
+                    // Record some statistics about our API usage
+                    long bytes = 0;
+                    if (profile.size != null) {
+                        bytes = profile.size;
+                    }
+                    orcidService.updateStatistics(1, bytes);
+                    
+                    // Time of this update
+                    Date timestamp = new Date();
+                    
                     // Process works records
                     for (Work work : profile.getWorks()) {
-                        orcidService.updateWorks(orcidId, work);
+                        orcidService.updateWorks(orcidId, work, timestamp);
                     }
                     
                     // Update the local copy of the orcid record (and mark as not stale)
                     orcidService.updateOrcid(orcidId,
                             profile.lastModified,
+                            timestamp,
                             profile.getGivenNames(),
                             profile.getFamilyName());
                     

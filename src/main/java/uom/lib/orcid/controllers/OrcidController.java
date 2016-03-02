@@ -17,12 +17,12 @@ public class OrcidController {
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public String getIndex(ModelMap model) throws Exception {
         
-        ArrayList<String> orcids = orcidService.getOrcids();
+        ArrayList<Profile> orcids = orcidService.getOrcids();
         System.out.println("Got " + orcids.size() + " orcids");
         
-        Collections.sort(orcids);
+        Collections.sort(orcids, Collections.reverseOrder());
         
-        model.addAttribute("orcids", orcids);
+        model.addAttribute("profiles", orcids);
         
         return "orcid/index";
     }

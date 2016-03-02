@@ -2,7 +2,8 @@ CREATE TABLE orcid (
   orcid_id VARCHAR(19) NOT NULL,
   family_name VARCHAR(255),
   given_names VARCHAR(255),
-  updated TIMESTAMP NULL,
+  last_modified TIMESTAMP NULL,
+  initial_load TIMESTAMP NULL,
   needs_update BOOLEAN DEFAULT NULL,
   PRIMARY KEY (orcid_id)
 );
@@ -18,4 +19,9 @@ CREATE TABLE works (
   publication_month SMALLINT,
   publication_year SMALLINT,
   PRIMARY KEY (orcid_id, put_code, identifier_type, identifier)
+);
+
+CREATE TABLE statistics (
+  api_requests INT NOT NULL,
+  api_data_bytes BIGINT NOT NULL
 );

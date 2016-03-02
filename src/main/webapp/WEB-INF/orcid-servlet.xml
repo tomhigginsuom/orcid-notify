@@ -58,6 +58,10 @@
         <property name="orcidService" ref="orcidsService" />
     </bean>
     
+    <bean id="orcidWebhook" class="uom.lib.orcid.controllers.OrcidWebhook">
+        <property name="orcidService" ref="orcidsService" />
+    </bean>
+    
     <bean id="orcidTask" class="uom.lib.orcid.controllers.OrcidTask">
         <property name="orcidService" ref="orcidsService" />
         <property name="profileService" ref="profileService" />
