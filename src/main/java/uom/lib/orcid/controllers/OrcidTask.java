@@ -63,6 +63,12 @@ public class OrcidTask {
                     
                 } catch (Exception e) {
                     e.printStackTrace();
+                    try {
+                        // Try to record an error against this record
+                        orcidService.markOrcidError(orcidId);
+                    } catch (Exception e2) {
+                        e2.printStackTrace();
+                    }
                 }
             }
         } catch (Exception e) {

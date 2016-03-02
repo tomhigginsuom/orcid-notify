@@ -76,6 +76,18 @@ public class Profile implements Comparable {
     
     public int compareTo(Object other) {
         Profile otherProfile = (Profile)other;
-        return this.lastModified.compareTo(otherProfile.getLastModified());
+        
+        if (this.lastModified != null || otherProfile.lastModified != null) {
+            if (otherProfile.lastModified == null) {
+                return 1;
+            }
+            if (this.lastModified == null) {
+                return -1;
+            }
+            return (this.lastModified.compareTo(otherProfile.lastModified));
+        }
+        
+        // Default order by identifier (reverse)
+        return otherProfile.identifier.compareTo(this.identifier);
     }
 }

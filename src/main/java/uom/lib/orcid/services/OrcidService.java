@@ -51,6 +51,10 @@ public class OrcidService {
         orcidDAO.markOrcidStale(orcidId);
     }
     
+    public void markOrcidError(String orcidId) {
+        orcidDAO.markOrcidError(orcidId);
+    }
+    
     public void updateOrcid(String orcidId, Date timestamp, Date initialLoad, String givenNames, String familyName) {
         orcidDAO.updateOrcid(orcidId, timestamp, initialLoad, givenNames, familyName);
     }

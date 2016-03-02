@@ -17,7 +17,7 @@ public class OrcidDAO {
     }
     
     public List<Map<String, Object>> getStaleOrcids() {
-        return this.jdbcTemplate.queryForList("select * from orcid where needs_update = 1 or last_modified is null");
+        return this.jdbcTemplate.queryForList("select * from orcid where error is null and (needs_update = 1 or last_modified is null)");
     }
     
     public Map<String, Object> getOrcidProfile(String orcidId) {
@@ -27,6 +27,10 @@ public class OrcidDAO {
     
     public void markOrcidStale(String orcidId) {
         this.jdbcTemplate.update("update orcid set needs_update = 1 where orcid_id = ?", orcidId);
+    }
+    
+    public void markOrcidError(String orcidId) {
+        this.jdbcTemplate.update("update orcid set error = 1 where orcid_id = ?", orcidId);
     }
     
     public void updateOrcid(String orcidId, Date timestamp, Date initialLoad, String givenNames, String familyName) {
