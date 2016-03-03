@@ -17,12 +17,18 @@ public class Work implements Comparable {
     public Integer month;
     public Integer day;
     
-    // Database record created
+    // Local database record created
     public Date created;
+    
+    // Context
+    public String workType;
     
     // Source
     public String identifierType;
     public String identifier;
+    
+    // Grouping
+    public Integer group;
     
     public int compareTo(Object other) {
         
@@ -69,12 +75,11 @@ public class Work implements Comparable {
         
         // Default order by title (reverse)
         return otherWork.title.compareTo(title);
-        
-        // return putCode - otherWork.putCode;
     }
     
-    public Work(Integer putCode, String title, Integer year, Integer month, Integer day, String identifierType, String identifier) {
+    public Work(Integer putCode, String workType, String title, Integer year, Integer month, Integer day, String identifierType, String identifier) {
         this.putCode = putCode;
+        this.workType = workType;
         this.title = title;
         this.year = year;
         this.month = month;
@@ -91,6 +96,14 @@ public class Work implements Comparable {
         this.putCode = putCode;
     }
 
+    public String getWorkType() {
+        return workType;
+    }
+
+    public void setWorkType(String workType) {
+        this.workType = workType;
+    }
+    
     public String getTitle() {
         return title;
     }
@@ -145,5 +158,13 @@ public class Work implements Comparable {
 
     public void setCreated(Date created) {
         this.created = created;
+    }
+
+    public Integer getGroup() {
+        return group;
+    }
+
+    public void setGroup(Integer group) {
+        this.group = group;
     }
 }

@@ -19,11 +19,12 @@
 
                 <thead>
                     <tr class="tr">
+                        <th>Group</th>
                         <th>PutCode</th>
+                        <th>Type</th>
                         <th>Title</th>
                         <th width="100px">Date</th>
-                        <th>Type</th>
-                        <th>Id</th>
+                        <th>ID</th>
                         <th>Timestamp</th>
                     </tr>
                 </thead>
@@ -31,7 +32,9 @@
                 <tbody>
                     <#list works as work>
                         <tr class="tr">
+                            <td>${work.group?c}</td>
                             <td>${work.putCode?c}</td>
+                            <td>${work.workType?html}</td>
                             <td>${work.title?html}</td>
 
                             <#if work.year??>
@@ -48,8 +51,7 @@
                                 <td></td>
                             </#if>
                             
-                            <td>${(work.identifierType?html)!}</td>
-                            <td>${(work.identifier?html)!}</td>
+                            <td><b>${(work.identifierType?html)!}</b> ${(work.identifier?html)!}</td>
                             <td>${(work.created?datetime)!}</td>
                         </tr>
                     </#list>

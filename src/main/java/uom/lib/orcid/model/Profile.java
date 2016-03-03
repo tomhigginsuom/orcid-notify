@@ -18,6 +18,7 @@ public class Profile implements Comparable {
     
     // Works
     public ArrayList<Work> works;
+    public Long groupCount;
     
     // API statistics
     public Integer size;
@@ -66,6 +67,14 @@ public class Profile implements Comparable {
         this.works = works;
     }
 
+    public Long getGroupCount() {
+        return groupCount;
+    }
+
+    public void setGroupCount(Long groupCount) {
+        this.groupCount = groupCount;
+    }
+    
     public Integer getSize() {
         return size;
     }

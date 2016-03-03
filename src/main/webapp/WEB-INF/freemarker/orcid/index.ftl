@@ -11,6 +11,7 @@
                 <tr class="tr">
                     <th>ORCID ID</th>
                     <th>Name</th>
+                    <th>Works (grouped)</th>
                     <th>Last modified</th>
                 </tr>
             </thead>
@@ -22,6 +23,7 @@
                             <a href="${springMacroRequestContext.getContextPath()}/${profile.identifier}">${profile.identifier}</a>
                         </td>
                         <td>${(profile.givenNames?html)!} ${(profile.familyName?html)!}</td>
+                        <td>${(profile.groupCount?c)!}</td>
                         <td>${(profile.lastModified?datetime)!}</td>
                     </tr>
                 </#list>

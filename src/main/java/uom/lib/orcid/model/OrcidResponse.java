@@ -57,6 +57,9 @@ public class OrcidResponse {
         @SerializedName("put-code")
         public Integer putCode;
 
+        @SerializedName("work-type")
+        public String workType;
+        
         @SerializedName("publication-date")
         public PublicationDate publicationDate;
 

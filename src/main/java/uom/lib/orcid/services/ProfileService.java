@@ -90,6 +90,7 @@ public class ProfileService {
                 if (work.workExternalIdentifiers == null ||
                     work.workExternalIdentifiers.workExternalIdentifier == null) {
                     works.add(new Work(work.putCode,
+                                       work.workType,
                                        title,
                                        year,
                                        month,
@@ -99,12 +100,13 @@ public class ProfileService {
                 } else {
                     for (OrcidResponse.WorkExternalIdentifier workId : work.workExternalIdentifiers.workExternalIdentifier) {
                         works.add(new Work(work.putCode,
-                                       title,
-                                       year,
-                                       month,
-                                       day,
-                                       workId.workExternalIdentifierType,
-                                       workId.workExternalIdentifierId.value));
+                                           work.workType,
+                                           title,
+                                           year,
+                                           month,
+                                           day,
+                                           workId.workExternalIdentifierType,
+                                           workId.workExternalIdentifierId.value));
                     }
                 }
             }

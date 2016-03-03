@@ -1,8 +1,12 @@
 package uom.lib.orcid.dao;
 
 import java.util.*;
+import java.sql.PreparedStatement;
+import java.sql.Connection;
+import java.sql.SQLException;
 import javax.sql.DataSource;
-import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.*;
+import org.springframework.jdbc.support.*;
 
 public class OrcidDAO {
    
@@ -13,7 +17,7 @@ public class OrcidDAO {
     }
 
     public List<Map<String, Object>> getOrcids() {
-        return this.jdbcTemplate.queryForList("select * from orcid");
+        return this.jdbcTemplate.queryForList("select *, (select count(*) from works_groups where works_groups.orcid_id = orcid.orcid_id) as group_count from orcid");
     }
     
     public List<Map<String, Object>> getStaleOrcids() {
@@ -66,7 +70,7 @@ public class OrcidDAO {
         return count != null && count > 0;
     }
     
-    public void addOrcidWork(String orcidId, Date timestamp, Integer putCode, String identifierType, String identifier, String title, Integer year, Integer month, Integer day) {
+    public void addOrcidWork(String orcidId, Date timestamp, Integer putCode, String identifierType, String identifier, Integer worksGroup, String workType, String title, Integer year, Integer month, Integer day) {
         
         if (identifier == null) {
             identifier = "";
@@ -76,8 +80,59 @@ public class OrcidDAO {
             identifierType = "";
         }
         
-        this.jdbcTemplate.update("insert into works (orcid_id, created, put_code, identifier_type, identifier, title, publication_year, publication_month, publication_day) values (?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                orcidId, timestamp, putCode, identifierType, identifier, title, year, month, day);
+        this.jdbcTemplate.update("insert into works (orcid_id, created, put_code, identifier_type, identifier, group_id, work_type, title, publication_year, publication_month, publication_day) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                orcidId, timestamp, putCode, identifierType, identifier, worksGroup, workType, title, year, month, day);
+    }
+    
+    public Integer getGroupCount(String orcidId) {
+        
+        Integer count = this.jdbcTemplate.queryForObject("select count(*) from works_groups where orcid_id = ?",
+                Integer.class,
+                orcidId);
+        
+        return count;
+    }
+    
+    public List<Map<String, Object>> getWorksGroupsForId(String orcidId, String identifierType, String identifier) {
+        
+        return this.jdbcTemplate.queryForList("select group_id from works where orcid_id = ? and identifier_type = ? and identifier = ? and group_id is not null",
+                orcidId, identifierType, identifier);
+    }
+    
+    public List<Map<String, Object>> getWorksGroupsForPutCode(String orcidId, Integer putCode) {
+        return this.jdbcTemplate.queryForList("select group_id from works where orcid_id = ? and put_code = ? and group_id is not null",
+                orcidId, putCode);
+    }
+    
+    public Integer addWorksGroup(final String orcidId) {
+        
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+        
+        jdbcTemplate.update(
+            new PreparedStatementCreator() {
+                @Override
+                public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
+                    PreparedStatement ps =
+                        connection.prepareStatement("insert into works_groups (orcid_id) values (?)", new String[] {"group_id"});
+                    ps.setString(1, orcidId);
+                    return ps;
+                }
+            },
+            keyHolder);
+        
+        // Get the generated work group ID
+        return keyHolder.getKey().intValue();
+    }
+    
+    public void mergeWorksGroups(String orcidId, int oldGroupId, int newGroupId) {
+        
+        // Update the individual works records
+        this.jdbcTemplate.update("update works set group_id = ? where group_id = ? and orcid_id = ?",
+            newGroupId, oldGroupId, orcidId);
+        
+        // Remove the old group record
+        this.jdbcTemplate.update("delete from works_groups where group_id = ? and orcid_id = ?",
+            oldGroupId, orcidId);
     }
     
     public void updateStatistics(int requests, long bytes) {

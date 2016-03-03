@@ -26,6 +26,7 @@ public class OrcidService {
             profile.setFamilyName((String)result.get("family_name"));
             profile.setGivenNames((String)result.get("given_names"));
             profile.setLastModified((Date)result.get("last_modified"));
+            profile.setGroupCount((Long)result.get("group_count"));
             
             orcids.add(profile);
         }
@@ -66,22 +67,28 @@ public class OrcidService {
         profile.setFamilyName((String)result.get("family_name"));
         profile.setGivenNames((String)result.get("given_names"));
         profile.setLastModified((Date)result.get("last_modified"));
+        profile.setGroupCount((Long)result.get("group_count"));
         
         return profile;
     }
     
     public void updateWorks(String orcidId, Work work, Date timestamp) {
         
-        // Check if exists in DB ...
+        // Check the work record already exists in the database ...
         boolean exists = orcidDAO.checkOrcidWorkExists(orcidId, work.getPutCode(), work.getIdentifierType(), work.getIdentifier());
         
         if (!exists) {
-            // Add new work informtion with current timestamp
+            
+            Integer worksGroup = assignWorksGroup(orcidId, work);
+            
+            // Add new work information with current timestamp
             orcidDAO.addOrcidWork(orcidId,
                     timestamp,
                     work.getPutCode(),
                     work.getIdentifierType(),
                     work.getIdentifier(),
+                    worksGroup,
+                    work.getWorkType(),
                     work.getTitle(),
                     work.getYear(),
                     work.getMonth(),
@@ -97,6 +104,7 @@ public class OrcidService {
         
         for (Map<String, Object> result : results) {
             Integer putCode = (Integer)result.get("put_code");
+            String workType = (String)result.get("work_type");
             String title = (String)result.get("title");
             Integer year = (Integer)result.get("publication_year");
             Integer month = (Integer)result.get("publication_month");
@@ -104,9 +112,11 @@ public class OrcidService {
             String identifierType = (String)result.get("identifier_type");
             String identifier = (String)result.get("identifier");
             Date created = (Date)result.get("created");
+            Integer group = (Integer)result.get("group_id");
             
-            Work work = new Work(putCode, title, year, month, day, identifierType, identifier);
+            Work work = new Work(putCode, workType, title, year, month, day, identifierType, identifier);
             work.setCreated(created);
+            work.setGroup(group);
             
             works.add(work);
         }
@@ -116,5 +126,51 @@ public class OrcidService {
     
     public void updateStatistics(int requests, long bytes) {
         orcidDAO.updateStatistics(requests, bytes);
+    }
+    public Integer assignWorksGroup(String orcidId, Work work) {
+        
+        HashSet<Integer> groups = new HashSet<>();
+        
+        // Check if any works groups exist for this orcid
+        Integer groupCount = orcidDAO.getGroupCount(orcidId);
+        if (groupCount > 0) {
+            
+            // Check for a matching existing group ...
+            
+            // Check for a matching ID in an existing group. ISSN matches are ignored.
+            if (work.identifierType != null && work.identifierType != null && !work.identifierType.equals("ISSN")) {        
+                List<Map<String, Object>> results =  orcidDAO.getWorksGroupsForId(orcidId, work.identifierType, work.identifier);
+                
+                for (Map<String, Object> result : results) {
+                    groups.add((Integer)result.get("group_id"));
+                }
+            }
+            
+            // Check for groups which have the same put code.
+            List<Map<String, Object>> results =  orcidDAO.getWorksGroupsForPutCode(orcidId, work.putCode);
+            for (Map<String, Object> result : results) {
+                groups.add((Integer)result.get("group_id"));
+            }
+            
+            // Choose a group from the set
+            Integer newGroupId = null;
+            for (Integer group : groups) {
+                
+                if (newGroupId == null) {
+                    // Take the first group
+                    newGroupId = group;
+                } else {
+                    // Merge this group into the chosen group
+                    orcidDAO.mergeWorksGroups(orcidId, group, newGroupId);
+                }
+            }
+            
+            if (newGroupId != null) {
+                return newGroupId;
+            }
+        }
+        
+        // Create a new group and return the ID
+        return orcidDAO.addWorksGroup(orcidId);
     }
 }
