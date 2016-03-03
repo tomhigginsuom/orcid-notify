@@ -80,6 +80,10 @@ public class OrcidDAO {
             identifierType = "";
         }
         
+        if (title == null) {
+            title = "";
+        }
+        
         this.jdbcTemplate.update("insert into works (orcid_id, created, put_code, identifier_type, identifier, group_id, work_type, title, publication_year, publication_month, publication_day) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                 orcidId, timestamp, putCode, identifierType, identifier, worksGroup, workType, title, year, month, day);
     }
