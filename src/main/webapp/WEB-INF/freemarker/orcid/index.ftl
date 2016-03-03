@@ -9,9 +9,9 @@
 
             <thead>
                 <tr class="tr">
-                    <th>ORCID ID</th>
+                    <th>ORCID</th>
                     <th>Name</th>
-                    <th>Works (grouped)</th>
+                    <th>Works</th>
                     <th>Last modified</th>
                 </tr>
             </thead>

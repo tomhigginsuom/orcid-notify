@@ -33,12 +33,12 @@ public class OrcidController {
         // Validate the ORCID format?
         
         Profile profile = orcidService.getOrcidProfile(orcidId);
-        ArrayList<Work> works = orcidService.getOrcidWorks(orcidId);
+        ArrayList<WorkGroup> workGroups = orcidService.getOrcidWorkGroups(orcidId);
         
-        Collections.sort(works, Collections.reverseOrder());
+        Collections.sort(workGroups, Collections.reverseOrder());
         
         model.addAttribute("profile", profile);
-        model.addAttribute("works", works);
+        model.addAttribute("workGroups", workGroups);
         return "orcid/orcid";
     }
 }

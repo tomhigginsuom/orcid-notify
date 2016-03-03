@@ -49,7 +49,7 @@ public class OrcidDAO {
     }
     
     public List<Map<String, Object>> getOrcidWorks(String orcidId) {
-        return this.jdbcTemplate.queryForList("select * from works where orcid_id = ?",
+        return this.jdbcTemplate.queryForList("select * from works where orcid_id = ? order by group_id",
                 orcidId);
     }
     

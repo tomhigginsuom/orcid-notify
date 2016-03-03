@@ -124,6 +124,49 @@ public class OrcidService {
         return works;
     }
     
+    public ArrayList<WorkGroup> getOrcidWorkGroups(String orcidId) throws Exception {
+
+        ArrayList<WorkGroup> workGroups = new ArrayList<>();
+        
+        List<Map<String, Object>> results =  orcidDAO.getOrcidWorks(orcidId);
+        
+        for (Map<String, Object> result : results) {
+            Integer putCode = (Integer)result.get("put_code");
+            String workType = (String)result.get("work_type");
+            String title = (String)result.get("title");
+            Integer year = (Integer)result.get("publication_year");
+            Integer month = (Integer)result.get("publication_month");
+            Integer day = (Integer)result.get("publication_day");
+            String identifierType = (String)result.get("identifier_type");
+            String identifier = (String)result.get("identifier");
+            Date created = (Date)result.get("created");
+            Integer groupId = (Integer)result.get("group_id");
+            
+            Work work = new Work(putCode, workType, title, year, month, day, identifierType, identifier);
+            work.setCreated(created);
+            work.setGroup(groupId);
+            
+            WorkGroup workGroup = null;
+            for (WorkGroup existingWorkGroup : workGroups) {
+                if (existingWorkGroup.getGroup().equals(groupId)) {
+                    // Add this work to the existing group record
+                    workGroup = existingWorkGroup;
+                    break;
+                }
+            }
+            
+            if (workGroup == null) {
+                workGroup = new WorkGroup(groupId, workType, title, year, month, day);
+                workGroups.add(workGroup);
+            }
+            
+            // Add this work information to the group (this may update the group properties)
+            workGroup.addWork(work);
+        }
+        
+        return workGroups;
+    }
+    
     public void updateStatistics(int requests, long bytes) {
         orcidDAO.updateStatistics(requests, bytes);
     }

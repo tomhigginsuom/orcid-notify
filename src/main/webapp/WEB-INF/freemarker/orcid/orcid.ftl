@@ -6,53 +6,63 @@
 <div class="container">
     <div class="header">
         <h3><a href="http://orcid.org/${profile.identifier}">http://orcid.org/${profile.identifier}</a></h3>
-        <p class="info">${(profile.givenNames?html)!} ${(profile.familyName?html)!}</p>
-        <p class="info light">Modified ${(profile.lastModified?datetime)!}</p>
+
+        <#if profile.lastModified?has_content>
+            <p class="info light">${(profile.lastModified?datetime)!}</p>
+        </#if>
+
+        <#if profile.givenNames?has_content || profile.familyName?has_content>
+            <p class="info">${(profile.givenNames?html)!} ${(profile.familyName?html)!}</p>
+        </#if>
+        
+        <#if workGroups?has_content>
+            <p class="info">${(workGroups?size)} works</p>
+        </#if>
     </div>
 </div>
 
 <div class="container">
-    <#if works?has_content>
+    <#if workGroups?has_content>
 
         <div class="table-responsive">
             <table class="table table-striped">
 
                 <thead>
                     <tr class="tr">
-                        <th>Group</th>
-                        <th>PutCode</th>
                         <th>Type</th>
                         <th>Title</th>
                         <th width="100px">Date</th>
-                        <th>ID</th>
-                        <th>Timestamp</th>
+                        <th>Identifiers</th>
                     </tr>
                 </thead>
 
                 <tbody>
-                    <#list works as work>
+                    <#list workGroups as workGroup>
                         <tr class="tr">
-                            <td>${work.group?c}</td>
-                            <td>${work.putCode?c}</td>
-                            <td>${work.workType?html}</td>
-                            <td>${work.title?html}</td>
+                            <td>${workGroup.workType?html}</td>
+                            <td>${workGroup.title?html}</td>
 
-                            <#if work.year??>
-                                <#if work.month??>
-                                    <#if work.day??>
-                                        <td>${work.year?c}-${work.month?left_pad(2,"0")}-${work.day?left_pad(2,"0")}</td>
+                            <#if workGroup.year??>
+                                <#if workGroup.month??>
+                                    <#if workGroup.day??>
+                                        <td>${workGroup.year?c}-${workGroup.month?left_pad(2,"0")}-${workGroup.day?left_pad(2,"0")}</td>
                                     <#else>
-                                        <td>${work.year?c}-${work.month?left_pad(2,"0")}</td>
+                                        <td>${workGroup.year?c}-${workGroup.month?left_pad(2,"0")}</td>
                                     </#if>
                                 <#else>
-                                    <td>${work.year?c}</td>
+                                    <td>${workGroup.year?c}</td>
                                 </#if>
                             <#else>
                                 <td></td>
                             </#if>
                             
-                            <td><b>${(work.identifierType?html)!}</b> ${(work.identifier?html)!}</td>
-                            <td>${(work.created?datetime)!}</td>
+                            <td style="font-family:monospace;">
+                                <#if workGroup.works?has_content>
+                                    <#list workGroup.works as work>
+                                        <b>${(work.identifierType?html)!}</b>:&nbsp;${(work.identifier?html)!}<br>
+                                    </#list>
+                                </#if>
+                            </td>
                         </tr>
                     </#list>
                 </tbody>
