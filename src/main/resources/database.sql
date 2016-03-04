@@ -24,7 +24,7 @@ CREATE TABLE works (
   work_type VARCHAR(100),
   group_id INT,
   title VARCHAR(1000),
-  created TIMESTAMP,
+  created TIMESTAMP NULL,
   publication_day SMALLINT,
   publication_month SMALLINT,
   publication_year SMALLINT,
