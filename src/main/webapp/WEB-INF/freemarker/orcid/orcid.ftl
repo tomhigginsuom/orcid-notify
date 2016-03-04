@@ -59,7 +59,9 @@
                             <td style="font-family:monospace;">
                                 <#if workGroup.works?has_content>
                                     <#list workGroup.works as work>
-                                        <b>${(work.identifierType?html)!}</b>:&nbsp;${(work.identifier?html)!}<br>
+                                        <#if work.identifier?has_content>
+                                            <b>${(work.identifierType?html)!}</b>:&nbsp;${(work.identifier?html)!}<br>
+                                        </#if>
                                     </#list>
                                 </#if>
                             </td>
