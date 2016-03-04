@@ -96,6 +96,26 @@ public class OrcidService {
         }
     }
     
+    public Work getWorkFromResult(Map<String, Object> result) {
+        String orcid = (String)result.get("orcid_id");
+        Integer putCode = (Integer)result.get("put_code");
+        String workType = (String)result.get("work_type");
+        String title = (String)result.get("title");
+        Integer year = (Integer)result.get("publication_year");
+        Integer month = (Integer)result.get("publication_month");
+        Integer day = (Integer)result.get("publication_day");
+        String identifierType = (String)result.get("identifier_type");
+        String identifier = (String)result.get("identifier");
+        Date created = (Date)result.get("created");
+        Integer group = (Integer)result.get("group_id");
+
+        Work work = new Work(orcid, putCode, workType, title, year, month, day, identifierType, identifier);
+        work.setCreated(created);
+        work.setGroup(group);
+
+        return work;
+    }
+    
     public ArrayList<Work> getOrcidWorks(String orcidId) throws Exception {
 
         ArrayList<Work> works = new ArrayList<>();
@@ -103,52 +123,36 @@ public class OrcidService {
         List<Map<String, Object>> results =  orcidDAO.getOrcidWorks(orcidId);
         
         for (Map<String, Object> result : results) {
-            Integer putCode = (Integer)result.get("put_code");
-            String workType = (String)result.get("work_type");
-            String title = (String)result.get("title");
-            Integer year = (Integer)result.get("publication_year");
-            Integer month = (Integer)result.get("publication_month");
-            Integer day = (Integer)result.get("publication_day");
-            String identifierType = (String)result.get("identifier_type");
-            String identifier = (String)result.get("identifier");
-            Date created = (Date)result.get("created");
-            Integer group = (Integer)result.get("group_id");
-            
-            Work work = new Work(putCode, workType, title, year, month, day, identifierType, identifier);
-            work.setCreated(created);
-            work.setGroup(group);
-            
+            Work work = getWorkFromResult(result);            
             works.add(work);
         }
         
         return works;
     }
     
-    public ArrayList<WorkGroup> getOrcidWorkGroups(String orcidId) throws Exception {
+    public ArrayList<Work> getNewOrcidWorksForYear(Integer year) throws Exception {
+
+        ArrayList<Work> works = new ArrayList<>();
+        
+        List<Map<String, Object>> results =  orcidDAO.getNewOrcidsForYear(year);
+        
+        for (Map<String, Object> result : results) {
+            Work work = getWorkFromResult(result);            
+            works.add(work);
+        }
+        
+        return works;
+    }
+    
+    public ArrayList<WorkGroup> groupWorks(ArrayList<Work> works) throws Exception {
 
         ArrayList<WorkGroup> workGroups = new ArrayList<>();
         
-        List<Map<String, Object>> results =  orcidDAO.getOrcidWorks(orcidId);
-        
-        for (Map<String, Object> result : results) {
-            Integer putCode = (Integer)result.get("put_code");
-            String workType = (String)result.get("work_type");
-            String title = (String)result.get("title");
-            Integer year = (Integer)result.get("publication_year");
-            Integer month = (Integer)result.get("publication_month");
-            Integer day = (Integer)result.get("publication_day");
-            String identifierType = (String)result.get("identifier_type");
-            String identifier = (String)result.get("identifier");
-            Date created = (Date)result.get("created");
-            Integer groupId = (Integer)result.get("group_id");
-            
-            Work work = new Work(putCode, workType, title, year, month, day, identifierType, identifier);
-            work.setCreated(created);
-            work.setGroup(groupId);
+        for (Work work : works) {
             
             WorkGroup workGroup = null;
             for (WorkGroup existingWorkGroup : workGroups) {
-                if (existingWorkGroup.getGroup().equals(groupId)) {
+                if (existingWorkGroup.getGroup().equals(work.group)) {
                     // Add this work to the existing group record
                     workGroup = existingWorkGroup;
                     break;
@@ -156,7 +160,7 @@ public class OrcidService {
             }
             
             if (workGroup == null) {
-                workGroup = new WorkGroup(groupId, workType, title, year, month, day);
+                workGroup = new WorkGroup(work.orcid, work.group, work.workType, work.title, work.year, work.month, work.day);
                 workGroups.add(workGroup);
             }
             

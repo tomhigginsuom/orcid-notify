@@ -9,6 +9,9 @@ public class Work implements Comparable {
     // ID
     public Integer putCode;
     
+    // ORCID
+    public String orcid;
+    
     // Title
     public String title;
     
@@ -77,7 +80,8 @@ public class Work implements Comparable {
         return otherWork.title.compareTo(title);
     }
     
-    public Work(Integer putCode, String workType, String title, Integer year, Integer month, Integer day, String identifierType, String identifier) {
+    public Work(String orcid, Integer putCode, String workType, String title, Integer year, Integer month, Integer day, String identifierType, String identifier) {
+        this.orcid = orcid;
         this.putCode = putCode;
         this.workType = workType;
         this.title = title;
@@ -88,6 +92,14 @@ public class Work implements Comparable {
         this.identifier = identifier;
     }
 
+    public String getOrcid() {
+        return orcid;
+    }
+
+    public void setOrcid(String orcid) {
+        this.orcid = orcid;
+    }
+    
     public Integer getPutCode() {
         return putCode;
     }

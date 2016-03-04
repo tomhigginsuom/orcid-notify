@@ -1,0 +1,76 @@
+<#import "*/layout/layout.ftl" as layout>
+<#-- Specify which navbar element should be flagged as active -->
+<#global nav="new">
+<@layout.orcidLayout>
+
+<div class="container">
+    <div class="header">
+        <h3>Publications for 2016</h3>
+        <#if workGroups?has_content>
+            <p class="info light">${(workGroups?size)} works added in the last 24 hours</p>
+        </#if>
+    </div>
+</div>
+
+<div class="container">
+    <#if workGroups?has_content>
+
+        <div class="table-responsive">
+            <table class="table table-striped">
+
+                <thead>
+                    <tr class="tr">
+                        <th width="200px">ORCID</th>
+                        <th>Title</th>
+                        <th width="100px">Date</th>
+                        <th>Identifiers</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <#list workGroups as workGroup>
+                        <tr class="tr">
+                            <td><a href="${springMacroRequestContext.getContextPath()}/${workGroup.orcid}">${workGroup.orcid}</a></td>
+                            <td>${workGroup.title?html}</td>
+
+                            <#if workGroup.year??>
+                                <#if workGroup.month??>
+                                    <#if workGroup.day??>
+                                        <td>${workGroup.year?c}-${workGroup.month?left_pad(2,"0")}-${workGroup.day?left_pad(2,"0")}</td>
+                                    <#else>
+                                        <td>${workGroup.year?c}-${workGroup.month?left_pad(2,"0")}</td>
+                                    </#if>
+                                <#else>
+                                    <td>${workGroup.year?c}</td>
+                                </#if>
+                            <#else>
+                                <td></td>
+                            </#if>
+                            
+                            <td style="font-family:monospace;">
+                                <#if workGroup.works?has_content>
+                                    <#list workGroup.works as work>
+                                        <#if work.identifier?has_content>
+                                            <b>${(work.identifierType?html)!}</b>:&nbsp;${(work.identifier?html)!}<br>
+                                        </#if>
+                                    </#list>
+                                </#if>
+                            </td>
+                        </tr>
+                    </#list>
+                </tbody>
+            </table>
+        </div>
+
+    <#else>
+        <div class="row">
+            <div class="alert alert-info" role="alert">
+                <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+                <span class="sr-only">Success:</span>
+                No works found
+            </div>
+        </div>
+    </#if>
+</div>
+
+</@layout.orcidLayout>

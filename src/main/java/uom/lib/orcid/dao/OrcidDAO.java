@@ -53,6 +53,11 @@ public class OrcidDAO {
                 orcidId);
     }
     
+    public List<Map<String, Object>> getNewOrcidsForYear(Integer year) {
+        return this.jdbcTemplate.queryForList("select * from works where group_id in (select g.group_id from (select group_id, min(created) min_created from works where group_id in (select distinct group_id from works where created > CURRENT_TIMESTAMP - INTERVAL 24 HOUR and publication_year = ?) group by group_id) as g where g.min_created > CURRENT_TIMESTAMP - INTERVAL 24 HOUR) order by group_id",
+                year);
+    }
+    
     public boolean checkOrcidWorkExists(String orcidId, Integer putCode, String identifierType, String identifier) {
         
         if (identifier == null) {

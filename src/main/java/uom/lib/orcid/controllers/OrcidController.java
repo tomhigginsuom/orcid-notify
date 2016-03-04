@@ -27,13 +27,27 @@ public class OrcidController {
         return "orcid/index";
     }
     
+    @RequestMapping(value = "/new", method = RequestMethod.GET)
+    public String getNew(ModelMap model) throws Exception {
+        
+        ArrayList<Work> works = orcidService.getNewOrcidWorksForYear(2016);
+        ArrayList<WorkGroup> workGroups = orcidService.groupWorks(works);
+        
+        Collections.sort(workGroups, Collections.reverseOrder());
+        
+        model.addAttribute("workGroups", workGroups);
+        
+        return "orcid/new";
+    }
+    
     @RequestMapping(value = "/{orcidid}", method = RequestMethod.GET)
     public String getOrcid(ModelMap model, @PathVariable("orcidid") String orcidId) throws Exception {
         
         // Validate the ORCID format?
         
         Profile profile = orcidService.getOrcidProfile(orcidId);
-        ArrayList<WorkGroup> workGroups = orcidService.getOrcidWorkGroups(orcidId);
+        ArrayList<Work> works = orcidService.getOrcidWorks(orcidId);
+        ArrayList<WorkGroup> workGroups = orcidService.groupWorks(works);
         
         Collections.sort(workGroups, Collections.reverseOrder());
         

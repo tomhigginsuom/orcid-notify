@@ -89,7 +89,8 @@ public class ProfileService {
 
                 if (work.workExternalIdentifiers == null ||
                     work.workExternalIdentifiers.workExternalIdentifier == null) {
-                    works.add(new Work(work.putCode,
+                    works.add(new Work(orcidId,
+                                       work.putCode,
                                        work.workType,
                                        title,
                                        year,
@@ -99,7 +100,8 @@ public class ProfileService {
                                        null));
                 } else {
                     for (OrcidResponse.WorkExternalIdentifier workId : work.workExternalIdentifiers.workExternalIdentifier) {
-                        works.add(new Work(work.putCode,
+                        works.add(new Work(orcidId,
+                                           work.putCode,
                                            work.workType,
                                            title,
                                            year,

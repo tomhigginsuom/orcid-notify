@@ -3,6 +3,7 @@
         <div class="container">
             <ul class="nav navbar-nav">
                 <li <#if nav == "home">class="active"</#if>><a href="${springMacroRequestContext.getContextPath()}/">Home <span class="sr-only">(current)</span></a></li>
+                <li <#if nav == "new">class="active"</#if>><a href="${springMacroRequestContext.getContextPath()}/new">New</a></li>
                 <li><a href="#">Help</a></li>
             </ul>
         </div>

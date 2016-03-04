@@ -9,6 +9,9 @@ public class WorkGroup implements Comparable {
      // ID
     public Integer group;
     
+    // ORCID
+    public String orcid;
+    
     // Title
     public String title;
     
@@ -73,7 +76,8 @@ public class WorkGroup implements Comparable {
         return otherWorkGroup.title.compareTo(title);
     }
     
-    public WorkGroup(Integer group, String workType, String title, Integer year, Integer month, Integer day) {
+    public WorkGroup(String orcid, Integer group, String workType, String title, Integer year, Integer month, Integer day) {
+        this.orcid = orcid;
         this.group = group;
         this.workType = workType;
         this.title = title;
@@ -82,6 +86,14 @@ public class WorkGroup implements Comparable {
         this.day = day;
     }
 
+    public String getOrcid() {
+        return orcid;
+    }
+
+    public void setOrcid(String orcid) {
+        this.orcid = orcid;
+    }
+    
     public String getWorkType() {
         return workType;
     }
